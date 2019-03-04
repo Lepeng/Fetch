@@ -18,6 +18,15 @@ const val GET_REQUEST_METHOD = "GET"
 
 const val HEAD_REQUEST_METHOD = "HEAD"
 
+interface UniqueIdGenerator {
+    fun genUniqueId(url: String, file: String) : Int
+}
+
+private var gUniqueIdGenerator : UniqueIdGenerator? = null
+fun setUniqueIdGenerator( gen : UniqueIdGenerator ) {
+    gUniqueIdGenerator = gen
+}
+
 fun calculateProgress(downloaded: Long, total: Long): Int {
     return when {
         total < 1 -> -1
@@ -48,7 +57,14 @@ fun hasIntervalTimeElapsed(nanoStartTime: Long, nanoStopTime: Long,
 }
 
 fun getUniqueId(url: String, file: String): Int {
-    return (url.hashCode() * 31) + file.hashCode()
+    val gen : UniqueIdGenerator? = gUniqueIdGenerator
+    return when {
+        gen == null -> {
+            (url.hashCode() * 31) + file.hashCode()
+        }else -> {
+            gen.genUniqueId(url, file)
+        }
+    }
 }
 
 fun getIncrementedFileIfOriginalExists(originalPath: String): File {

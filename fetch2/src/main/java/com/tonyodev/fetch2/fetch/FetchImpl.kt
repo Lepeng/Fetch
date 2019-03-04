@@ -49,18 +49,18 @@ open class FetchImpl constructor(override val namespace: String,
             if (result.isNotEmpty()) {
                 val enqueuedPair = result.first()
                 if (enqueuedPair.second != Error.NONE) {
-                    uiHandler.post {
+                    // uiHandler.post {
                         func2?.call(enqueuedPair.second)
-                    }
+                    // }
                 } else {
-                    uiHandler.post {
+                    // uiHandler.post {
                         func?.call(enqueuedPair.first)
-                    }
+                    // }
                 }
             } else {
-                uiHandler.post {
+                // uiHandler.post {
                     func2?.call(Error.ENQUEUE_NOT_SUCCESSFUL)
-                }
+                // }
             }
         }, func2)
         return this
@@ -81,7 +81,7 @@ open class FetchImpl constructor(override val namespace: String,
                         throw FetchException(ENQUEUED_REQUESTS_ARE_NOT_DISTINCT)
                     }
                     val downloadPairs = fetchHandler.enqueue(requests)
-                    uiHandler.post {
+                    // uiHandler.post {
                         downloadPairs.forEach { downloadPair ->
                             val download = downloadPair.first
                             when (download.status) {
@@ -107,15 +107,15 @@ open class FetchImpl constructor(override val namespace: String,
                             }
                         }
                         func?.call(downloadPairs.map { Pair(it.first.request, it.second) })
-                    }
+                    // }
                 } catch (e: Exception) {
                     logger.e("Failed to enqueue list $requests")
                     val error = getErrorFromMessage(e.message)
                     error.throwable = e
                     if (func2 != null) {
-                        uiHandler.post {
+                        // uiHandler.post {
                             func2.call(error)
-                        }
+                        // }
                     }
                 }
             }
@@ -164,21 +164,21 @@ open class FetchImpl constructor(override val namespace: String,
                             listOf()
                         }
                     }
-                    uiHandler.post {
+                    // uiHandler.post {
                         downloads.forEach {
                             logger.d("Paused download $it")
                             listenerCoordinator.mainListener.onPaused(it)
                         }
                         func?.call(downloads)
-                    }
+                    // }
                 } catch (e: Exception) {
                     logger.e("Fetch with namespace $namespace error", e)
                     val error = getErrorFromMessage(e.message)
                     error.throwable = e
                     if (func2 != null) {
-                        uiHandler.post {
+                        // uiHandler.post {
                             func2.call(error)
-                        }
+                        // }
                     }
                 }
             }
@@ -460,21 +460,21 @@ open class FetchImpl constructor(override val namespace: String,
             handlerWrapper.post {
                 try {
                     val downloads = downloadAction.invoke()
-                    uiHandler.post {
+                    // uiHandler.post {
                         downloads.forEach {
                             logger.d("Deleted download $it")
                             listenerCoordinator.mainListener.onDeleted(it)
                         }
                         func?.call(downloads)
-                    }
+                    // }
                 } catch (e: Exception) {
                     logger.e("Fetch with namespace $namespace error", e)
                     val error = getErrorFromMessage(e.message)
                     error.throwable = e
                     if (func2 != null) {
-                        uiHandler.post {
+                        // uiHandler.post {
                             func2.call(error)
-                        }
+                        // }
                     }
                 }
             }
@@ -526,21 +526,21 @@ open class FetchImpl constructor(override val namespace: String,
             handlerWrapper.post {
                 try {
                     val downloads = downloadAction.invoke()
-                    uiHandler.post {
+                    // uiHandler.post {
                         downloads.forEach {
                             logger.d("Cancelled download $it")
                             listenerCoordinator.mainListener.onCancelled(it)
                         }
                         func?.call(downloads)
-                    }
+                    // }
                 } catch (e: Exception) {
                     logger.e("Fetch with namespace $namespace error", e)
                     val error = getErrorFromMessage(e.message)
                     error.throwable = e
                     if (func2 != null) {
-                        uiHandler.post {
+                        // uiHandler.post {
                             func2.call(error)
-                        }
+                        // }
                     }
                 }
             }
@@ -554,21 +554,21 @@ open class FetchImpl constructor(override val namespace: String,
             handlerWrapper.post {
                 try {
                     val downloads = fetchHandler.retry(ids)
-                    uiHandler.post {
+                    // uiHandler.post {
                         downloads.forEach {
                             logger.d("Queued $it for download")
                             listenerCoordinator.mainListener.onQueued(it, false)
                         }
                         func?.call(downloads)
-                    }
+                    // }
                 } catch (e: Exception) {
                     logger.e("Fetch with namespace $namespace error", e)
                     val error = getErrorFromMessage(e.message)
                     error.throwable = e
                     if (func2 != null) {
-                        uiHandler.post {
+                        // uiHandler.post {
                             func2.call(error)
-                        }
+                        // }
                     }
                 }
             }
@@ -603,7 +603,7 @@ open class FetchImpl constructor(override val namespace: String,
                     val downloadPair = fetchHandler.updateRequest(requestId, updatedRequest)
                     val download = downloadPair.first
                     logger.d("UpdatedRequest with id: $requestId to $download")
-                    uiHandler.post {
+                    // uiHandler.post {
                         if (notifyListeners) {
                             when (download.status) {
                                 Status.COMPLETED -> {
@@ -643,15 +643,15 @@ open class FetchImpl constructor(override val namespace: String,
                             }
                         }
                         func?.call(download)
-                    }
+                    // }
                 } catch (e: Exception) {
                     logger.e("Failed to update request with id $requestId", e)
                     val error = getErrorFromMessage(e.message)
                     error.throwable = e
                     if (func2 != null) {
-                        uiHandler.post {
+                        // uiHandler.post {
                             func2.call(error)
-                        }
+                        // }
                     }
                 }
             }
@@ -666,18 +666,18 @@ open class FetchImpl constructor(override val namespace: String,
                 try {
                     val download = fetchHandler.replaceExtras(id, extras)
                     if (func != null) {
-                        uiHandler.post {
+                        // uiHandler.post {
                             func.call(download)
-                        }
+                        // }
                     }
                 } catch (e: Exception) {
                     logger.e("Failed to replace extras on download with id $id", e)
                     val error = getErrorFromMessage(e.message)
                     error.throwable = e
                     if (func2 != null) {
-                        uiHandler.post {
+                        // uiHandler.post {
                             func2.call(error)
-                        }
+                        // }
                     }
                 }
             }
@@ -690,9 +690,9 @@ open class FetchImpl constructor(override val namespace: String,
             throwExceptionIfClosed()
             handlerWrapper.post {
                 val downloads = fetchHandler.getDownloads()
-                uiHandler.post {
+                // uiHandler.post {
                     func.call(downloads)
-                }
+                // }
             }
             this
         }
@@ -703,9 +703,9 @@ open class FetchImpl constructor(override val namespace: String,
             throwExceptionIfClosed()
             handlerWrapper.post {
                 val download = fetchHandler.getDownload(id)
-                uiHandler.post {
+                // uiHandler.post {
                     func2.call(download)
-                }
+                // }
             }
             return this
         }
@@ -716,9 +716,9 @@ open class FetchImpl constructor(override val namespace: String,
             throwExceptionIfClosed()
             handlerWrapper.post {
                 val downloads = fetchHandler.getDownloads(idList)
-                uiHandler.post {
+                // uiHandler.post {
                     func.call(downloads)
-                }
+                // }
             }
             return this
         }
@@ -729,9 +729,9 @@ open class FetchImpl constructor(override val namespace: String,
             throwExceptionIfClosed()
             handlerWrapper.post {
                 val downloads = fetchHandler.getDownloadsInGroup(groupId)
-                uiHandler.post {
+                // uiHandler.post {
                     func.call(downloads)
-                }
+                // }
             }
             return this
         }
@@ -742,9 +742,9 @@ open class FetchImpl constructor(override val namespace: String,
             throwExceptionIfClosed()
             handlerWrapper.post {
                 val downloads = fetchHandler.getDownloadsWithStatus(status)
-                uiHandler.post {
+                // uiHandler.post {
                     func.call(downloads)
-                }
+                // }
             }
             return this
         }
@@ -755,9 +755,9 @@ open class FetchImpl constructor(override val namespace: String,
             throwExceptionIfClosed()
             handlerWrapper.post {
                 val downloads = fetchHandler.getDownloadsInGroupWithStatus(groupId, statuses)
-                uiHandler.post {
+                // uiHandler.post {
                     func.call(downloads)
-                }
+                // }
             }
             return this
         }
@@ -768,9 +768,9 @@ open class FetchImpl constructor(override val namespace: String,
             throwExceptionIfClosed()
             handlerWrapper.post {
                 val downloads = fetchHandler.getDownloadsByRequestIdentifier(identifier)
-                uiHandler.post {
+                // uiHandler.post {
                     func.call(downloads)
-                }
+                // }
             }
             return this
         }
@@ -792,7 +792,7 @@ open class FetchImpl constructor(override val namespace: String,
             handlerWrapper.post {
                 try {
                     val downloads = fetchHandler.enqueueCompletedDownloads(completedDownloads)
-                    uiHandler.post {
+                    // uiHandler.post {
                         if (alertListeners) {
                             downloads.forEach {
                                 listenerCoordinator.mainListener.onCompleted(it)
@@ -800,15 +800,15 @@ open class FetchImpl constructor(override val namespace: String,
                             }
                         }
                         func?.call(downloads)
-                    }
+                    // }
                 } catch (e: Exception) {
                     logger.e("Failed to add CompletedDownload list $completedDownloads")
                     val error = getErrorFromMessage(e.message)
                     error.throwable = e
                     if (func2 != null) {
-                        uiHandler.post {
+                        // uiHandler.post {
                             func2.call(error)
-                        }
+                        // }
                     }
                 }
 
@@ -857,9 +857,9 @@ open class FetchImpl constructor(override val namespace: String,
             throwExceptionIfClosed()
             handlerWrapper.post {
                 val downloadBlocksList = fetchHandler.getDownloadBlocks(downloadId)
-                uiHandler.post {
+                // uiHandler.post {
                     func.call(downloadBlocksList)
-                }
+                // }
             }
             return this
         }
@@ -871,17 +871,17 @@ open class FetchImpl constructor(override val namespace: String,
             handlerWrapper.executeWorkerTask {
                 try {
                     val contentLength = fetchHandler.getContentLengthForRequest(request, fromServer)
-                    uiHandler.post {
+                    // uiHandler.post {
                         func.call(contentLength)
-                    }
+                    // }
                 } catch (e: Exception) {
                     logger.e("Fetch with namespace $namespace error", e)
                     val error = getErrorFromMessage(e.message)
                     error.throwable = e
                     if (func2 != null) {
-                        uiHandler.post {
+                        // uiHandler.post {
                             func2.call(error)
-                        }
+                        // }
                     }
                 }
             }
@@ -898,17 +898,17 @@ open class FetchImpl constructor(override val namespace: String,
             handlerWrapper.executeWorkerTask {
                 try {
                     val response = fetchHandler.getServerResponse(url, headers)
-                    uiHandler.post {
+                    // uiHandler.post {
                         func.call(response)
-                    }
+                    // }
                 } catch (e: Exception) {
                     logger.e("Fetch with namespace $namespace error", e)
                     val error = getErrorFromMessage(e.message)
                     error.throwable = e
                     if (func2 != null) {
-                        uiHandler.post {
+                        // uiHandler.post {
                             func2.call(error)
-                        }
+                        // }
                     }
                 }
             }
@@ -922,17 +922,17 @@ open class FetchImpl constructor(override val namespace: String,
             handlerWrapper.executeWorkerTask {
                 try {
                     val fileResourceList = fetchHandler.getFetchFileServerCatalog(request)
-                    uiHandler.post {
+                    // uiHandler.post {
                         func.call(fileResourceList)
-                    }
+                    // }
                 } catch (e: Exception) {
                     logger.e("Fetch with namespace $namespace error", e)
                     val error = getErrorFromMessage(e.message)
                     error.throwable = e
                     if (func2 != null) {
-                        uiHandler.post {
+                        // uiHandler.post {
                             func2.call(error)
-                        }
+                        // }
                     }
                 }
             }

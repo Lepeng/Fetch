@@ -8,6 +8,7 @@ import com.tonyodev.fetch2.util.defaultNoError
 import com.tonyodev.fetch2.Status
 import com.tonyodev.fetch2core.DownloadBlock
 
+import android.util.Log
 
 class FileDownloaderDelegate(private val downloadInfoUpdater: DownloadInfoUpdater,
                              private val fetchListener: FetchListener,
@@ -35,6 +36,10 @@ class FileDownloaderDelegate(private val downloadInfoUpdater: DownloadInfoUpdate
     override fun onStarted(download: Download, downloadBlocks: List<DownloadBlock>, totalBlocks: Int) {
         synchronized(lock) {
             if (!interrupted) {
+
+                fetchListener.onStarted(download, downloadBlocks, totalBlocks)
+
+                /*
                 val downloadInfo = download as DownloadInfo
                 downloadInfo.status = Status.DOWNLOADING
                 downloadInfoUpdater.update(downloadInfo)
@@ -42,6 +47,7 @@ class FileDownloaderDelegate(private val downloadInfoUpdater: DownloadInfoUpdate
                 startRunnable.downloadBlocks = downloadBlocks
                 startRunnable.totalBlocks = totalBlocks
                 uiHandler.post(startRunnable)
+                */
             }
         }
     }
@@ -55,10 +61,14 @@ class FileDownloaderDelegate(private val downloadInfoUpdater: DownloadInfoUpdate
     override fun onProgress(download: Download, etaInMilliSeconds: Long, downloadedBytesPerSecond: Long) {
         synchronized(lock) {
             if (!interrupted) {
+                fetchListener.onProgress(download, etaInMilliSeconds, downloadedBytesPerSecond)
+
+                /*
                 progressRunnable.download = download
                 progressRunnable.etaInMilliSeconds = etaInMilliSeconds
                 progressRunnable.downloadedBytesPerSecond = downloadedBytesPerSecond
                 uiHandler.post(progressRunnable)
+                */
             }
         }
     }
@@ -72,10 +82,13 @@ class FileDownloaderDelegate(private val downloadInfoUpdater: DownloadInfoUpdate
     override fun onDownloadBlockUpdated(download: Download, downloadBlock: DownloadBlock, totalBlocks: Int) {
         synchronized(lock) {
             if (!interrupted) {
+                fetchListener.onDownloadBlockUpdated(download, downloadBlock, totalBlocks)
+                /*
                 downloadBlockProgressRunnable.download = download
                 downloadBlockProgressRunnable.downloadBlock = downloadBlock
                 downloadBlockProgressRunnable.totalBlocks = totalBlocks
                 uiHandler.post(downloadBlockProgressRunnable)
+                */
             }
         }
     }
@@ -88,15 +101,17 @@ class FileDownloaderDelegate(private val downloadInfoUpdater: DownloadInfoUpdate
                     downloadInfo.status = Status.QUEUED
                     downloadInfo.error = defaultNoError
                     downloadInfoUpdater.update(downloadInfo)
-                    uiHandler.post {
-                        fetchListener.onQueued(download, true)
-                    }
+                    // uiHandler.post {
+                    //     fetchListener.onQueued(download, true)
+                    // }
+                    fetchListener.onQueued(download, true)
                 } else {
                     downloadInfo.status = Status.FAILED
                     downloadInfoUpdater.update(downloadInfo)
-                    uiHandler.post {
-                        fetchListener.onError(download, error, throwable)
-                    }
+                    // uiHandler.post {
+                    //     fetchListener.onError(download, error, throwable)
+                    // }
+                    fetchListener.onError(download, error, throwable)
                 }
             }
         }
@@ -108,9 +123,10 @@ class FileDownloaderDelegate(private val downloadInfoUpdater: DownloadInfoUpdate
                 val downloadInfo = download as DownloadInfo
                 downloadInfo.status = Status.COMPLETED
                 downloadInfoUpdater.update(downloadInfo)
-                uiHandler.post {
-                    fetchListener.onCompleted(download)
-                }
+                // uiHandler.post {
+                //     fetchListener.onCompleted(download)
+                // }
+                fetchListener.onCompleted(download)
             }
         }
     }

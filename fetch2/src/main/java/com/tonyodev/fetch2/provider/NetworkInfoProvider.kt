@@ -28,6 +28,7 @@ class NetworkInfoProvider constructor(private val context: Context) {
     private var networkCallback: Any? = null
 
     init {
+        /*
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && connectivityManager != null) {
             val networkRequest = NetworkRequest.Builder()
                     .addTransportType(NetworkCapabilities.TRANSPORT_CELLULAR)
@@ -54,6 +55,7 @@ class NetworkInfoProvider constructor(private val context: Context) {
 
             }
         }
+        */
     }
 
     private fun notifyNetworkChangeListeners() {
