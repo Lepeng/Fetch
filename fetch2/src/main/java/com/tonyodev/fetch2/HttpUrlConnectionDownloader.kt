@@ -8,6 +8,8 @@ import java.net.URL
 import java.util.Collections
 import kotlin.collections.HashMap
 
+import android.util.Log
+
 /**
  * The default Downloader used by Fetch for downloading requests.
  * This downloader uses a HttpUrlConnection to perform http requests
@@ -46,8 +48,37 @@ open class HttpUrlConnectionDownloader @JvmOverloads constructor(
         return null
     }
 
+    private fun _connectWithRedirectsHandled(request: Downloader.ServerRequest) : HttpURLConnection {
+        var client : HttpURLConnection
+        var redirected : Boolean
+        var url : String = request.url
+        var redirectedTimes : Int = 0
+        val MaxRedirectTimes = 20
+        do {
+            redirectedTimes++
+            val httpUrl = URL(url)
+            client = httpUrl.openConnection() as HttpURLConnection
+            onPreClientExecute(client, request)
+
+            client.connect()
+
+            val code = client.responseCode
+            redirected = (code == HttpURLConnection.HTTP_MOVED_PERM || code == HttpURLConnection.HTTP_MOVED_TEMP || code == HttpURLConnection.HTTP_SEE_OTHER)
+            if (redirected) {
+                if(redirectedTimes >= MaxRedirectTimes ) {
+                    break;
+                }else {
+                    url = client.getHeaderField("Location")
+                    client.disconnect()
+                }
+            }
+        } while (redirected);
+        return client;
+    }
+
     override fun execute(request: Downloader.ServerRequest, interruptMonitor: InterruptMonitor): Downloader.Response? {
         CookieHandler.setDefault(cookieManager)
+        /*
         val httpUrl = URL(request.url)
         val client = httpUrl.openConnection() as HttpURLConnection
         onPreClientExecute(client, request)
@@ -55,7 +86,12 @@ open class HttpUrlConnectionDownloader @JvmOverloads constructor(
         //     val referer = getRefererFromUrl(request.url)
         //     client.addRequestProperty("Referer", referer)
         // }
+        // .setInstanceFollowRedirects( boolean )
         client.connect()
+        */
+
+        val client = _connectWithRedirectsHandled(request)
+        
         val code = client.responseCode
         var success = false
         var contentLength = -1L
