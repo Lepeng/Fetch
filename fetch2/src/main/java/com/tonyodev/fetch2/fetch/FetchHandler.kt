@@ -41,6 +41,7 @@ interface FetchHandler : Closeable {
     fun getDownloads(): List<Download>
     fun getDownload(id: Int): Download?
     fun getDownloads(idList: List<Int>): List<Download>
+    fun getDownloadByFile(file: String): Download?
     fun getDownloadsInGroup(id: Int): List<Download>
     fun getDownloadsWithStatus(status: Status): List<Download>
     fun getDownloadsInGroupWithStatus(groupId: Int, statuses: List<Status>): List<Download>

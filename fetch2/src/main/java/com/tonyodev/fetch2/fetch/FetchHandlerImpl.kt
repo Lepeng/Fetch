@@ -394,6 +394,10 @@ class FetchHandlerImpl(private val namespace: String,
         return databaseManager.get(idList).filterNotNull()
     }
 
+    override fun getDownloadByFile(file: String): Download? {
+        return databaseManager.getByFile(file)
+    }
+
     override fun getDownloadsInGroup(id: Int): List<Download> {
         return databaseManager.getByGroup(id)
     }

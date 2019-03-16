@@ -622,6 +622,8 @@ interface Fetch {
      * */
     fun getDownload(id: Int, func2: Func2<Download?>): Fetch
 
+    fun getDownloadByFile(file: String, func2: Func2<Download?>): Fetch
+
     /**
      * Gets all downloads in the specified group.
      * @param groupId group id to query.

@@ -711,6 +711,19 @@ open class FetchImpl constructor(override val namespace: String,
         }
     }
 
+    override fun getDownloadByFile(file: String, func2: Func2<Download?>): Fetch {
+        synchronized(lock) {
+            throwExceptionIfClosed()
+            handlerWrapper.post {
+                val download = fetchHandler.getDownloadByFile(file)
+                // uiHandler.post {
+                    func2.call(download)
+                // }
+            }
+            return this
+        }
+    }
+
     override fun getDownloads(idList: List<Int>, func: Func<List<Download>>): Fetch {
         synchronized(lock) {
             throwExceptionIfClosed()
