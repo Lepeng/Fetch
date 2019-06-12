@@ -12,6 +12,7 @@ import com.tonyodev.fetch2.util.*
 import com.tonyodev.fetch2core.*
 import java.io.IOException
 import java.util.*
+import java.io.File
 
 /**
  * This handlerWrapper class handles all tasks and operations of Fetch.
@@ -335,6 +336,31 @@ class FetchHandlerImpl(private val namespace: String,
         return retryDownloads
     }
 
+    private fun renameTempFiles(oldRequestId: Int, newRequest: Request) {
+        /**
+         * 并行下载的时候，下载保存的中间文件位置
+         * 参考 FetchUtils.getDownloadedInfoFilePath() : "$fileTempDir/$id.$position.data"
+         */
+        var tmpServerRequest = getServerRequestFromRequest(newRequest)
+        val fileTempDir = storageResolver.getDirectoryForFileDownloaderTypeParallel(tmpServerRequest)
+
+        val newReqId = newRequest.id
+
+        File("${fileTempDir}")
+        .walk()
+        .maxDepth(1)
+        .filter { it.isFile }
+        .filter { it.name.startsWith("${oldRequestId}.",true) }
+        .forEach {
+            val oldFileName = it.name
+            val dotIdxInOldFileName = oldFileName.indexOf(".")
+            if( dotIdxInOldFileName > -1 ) {
+                val newFileName = "${newReqId}" + oldFileName.substring(dotIdxInOldFileName)
+                it.renameTo( File( "$fileTempDir/$newFileName" ) )
+            }
+        }
+    }
+
     override fun updateRequest(requestId: Int, newRequest: Request): Pair<Download, Boolean> {
         var oldDownloadInfo = databaseManager.get(requestId)
         if (oldDownloadInfo != null) {
@@ -354,6 +380,7 @@ class FetchHandlerImpl(private val namespace: String,
                     newDownloadInfo.status = oldDownloadInfo.status
                     newDownloadInfo.error = oldDownloadInfo.error
                 }
+                renameTempFiles(requestId, newRequest) // rename temp downloading files
                 databaseManager.delete(oldDownloadInfo)
                 databaseManager.insert(newDownloadInfo)
                 startPriorityQueueIfNotStarted()
