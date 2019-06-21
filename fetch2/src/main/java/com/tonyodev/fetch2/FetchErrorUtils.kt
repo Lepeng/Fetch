@@ -77,6 +77,8 @@ fun getErrorFromMessage(message: String?): Error {
         Error.ENQUEUED_REQUESTS_ARE_NOT_DISTINCT
     } else if (message.contains(ENQUEUE_NOT_SUCCESSFUL, true)) {
         Error.ENQUEUE_NOT_SUCCESSFUL
+    } else if (message.contains(REQUEST_FILE_LENGTH_CHANGED, true)) {
+        Error.REQUEST_FILE_LENGTH_CHANGED
     } else {
         Error.UNKNOWN
     }

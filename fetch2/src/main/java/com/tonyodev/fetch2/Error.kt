@@ -116,7 +116,10 @@ enum class Error constructor(
     COMPLETED_NOT_ADDED_SUCCESSFULLY(26),
 
     /** Indicates that the requests in the list are not distinct by file name.*/
-    ENQUEUED_REQUESTS_ARE_NOT_DISTINCT(27);
+    ENQUEUED_REQUESTS_ARE_NOT_DISTINCT(27),
+
+    /** Request file length changed */
+    REQUEST_FILE_LENGTH_CHANGED(77);
 
     companion object {
 
@@ -149,6 +152,7 @@ enum class Error constructor(
                 25 -> ENQUEUE_NOT_SUCCESSFUL
                 26 -> COMPLETED_NOT_ADDED_SUCCESSFULLY
                 27 -> ENQUEUED_REQUESTS_ARE_NOT_DISTINCT
+                77 -> REQUEST_FILE_LENGTH_CHANGED
                 else -> UNKNOWN
             }
         }

@@ -105,6 +105,13 @@ class ParallelFileDownloaderImpl(private val initialDownload: Download,
                 setIsTotalUnknown(openingResponse)
             }
             if (!interrupted && !terminated && openingResponse?.isSuccessful == true) {
+                // check if requesting file fize changed
+                if( initialDownload.total > 0 ) {
+                    if( openingResponse.contentLength != initialDownload.total ) {
+                        throw FetchException(REQUEST_FILE_LENGTH_CHANGED)
+                    }
+                }
+
                 total = openingResponse.contentLength
                 if (totalUnknown || total > 0) {
                     downloaded = 0
