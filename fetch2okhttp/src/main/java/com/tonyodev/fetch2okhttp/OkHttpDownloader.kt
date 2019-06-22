@@ -136,7 +136,7 @@ open class OkHttpDownloader @JvmOverloads constructor(
         }
     }
 
-    override fun getFileSlicingCount(request: Downloader.ServerRequest, contentLength: Long): Int? {
+    override fun getFileSlicingCount(request: Downloader.ServerRequest, contentLength: Long, previousSliceSize: Int): Int? {
         return null
     }
 

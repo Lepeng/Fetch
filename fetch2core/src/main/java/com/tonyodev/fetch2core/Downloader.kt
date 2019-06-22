@@ -58,7 +58,7 @@ interface Downloader<T, R> : Closeable {
      * @param contentLength the total content length in bytes.
      * @return the slicing size for the request file. Can be null.
      * */
-    fun getFileSlicingCount(request: ServerRequest, contentLength: Long): Int?
+    fun getFileSlicingCount(request: ServerRequest, contentLength: Long, previousSliceSize: Int): Int?
 
     /** This method is called by Fetch to select the FileDownloaderType for each
      * download request. The Default is FileDownloaderType.SEQUENTIAL.

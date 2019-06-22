@@ -279,7 +279,7 @@ class ParallelFileDownloaderImpl(private val initialDownload: Download,
         }
         val previousSliceSize = getPreviousSliceCount(downloadInfo.id, fileTempDir)
         return if (acceptsRanges && !totalUnknown) {
-            val fileSliceInfo = getChuckInfo(request)
+            val fileSliceInfo = getChuckInfo(request, previousSliceSize)
             if (previousSliceSize != fileSliceInfo.slicingCount) {
                 deleteAllInFolderForId(downloadInfo.id, fileTempDir)
             }
@@ -325,8 +325,8 @@ class ParallelFileDownloaderImpl(private val initialDownload: Download,
         }
     }
 
-    private fun getChuckInfo(request: Downloader.ServerRequest): FileSliceInfo {
-        val fileSliceSize = downloader.getFileSlicingCount(request, total)
+    private fun getChuckInfo(request: Downloader.ServerRequest, previousSliceSize: Int): FileSliceInfo {
+        val fileSliceSize = downloader.getFileSlicingCount(request, total, previousSliceSize)
                 ?: DEFAULT_FILE_SLICE_NO_LIMIT_SET
         return getFileSliceInfo(fileSliceSize, total)
     }
