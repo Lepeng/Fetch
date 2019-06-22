@@ -177,6 +177,14 @@ class DatabaseManagerImpl constructor(context: Context,
         }
     }
 
+    override fun getDownloadIdsByFilePrefix(filePrex: String): List<Int> {
+        synchronized(lock) {
+            throwExceptionIfClosed()
+            var ids = requestDatabase.requestDao().getDownloadIdsByFilePrefix(filePrex)
+            return ids
+        }
+    }
+
     override fun getByStatus(status: Status): List<DownloadInfo> {
         synchronized(lock) {
             throwExceptionIfClosed()

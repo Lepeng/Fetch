@@ -425,6 +425,10 @@ class FetchHandlerImpl(private val namespace: String,
         return databaseManager.getByFile(file)
     }
 
+    override fun getDownloadIdsByFilePrefix(filePrex: String): List<Int> {
+        return databaseManager.getDownloadIdsByFilePrefix(filePrex)
+    }
+
     override fun getDownloadsInGroup(id: Int): List<Download> {
         return databaseManager.getByGroup(id)
     }

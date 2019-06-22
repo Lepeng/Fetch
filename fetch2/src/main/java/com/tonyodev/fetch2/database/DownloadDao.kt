@@ -48,6 +48,9 @@ interface DownloadDao {
     @Query("SELECT * FROM $TABLE_NAME WHERE $COLUMN_FILE = :file")
     fun getByFile(file: String): DownloadInfo?
 
+    @Query("SELECT $COLUMN_ID FROM $TABLE_NAME WHERE $COLUMN_FILE LIKE :filePrex || '%'")
+    fun getDownloadIdsByFilePrefix(filePrex: String): List<Int>
+
     @Query("SELECT * FROM $TABLE_NAME WHERE $COLUMN_STATUS = :status")
     fun getByStatus(status: Status): List<DownloadInfo>
 
