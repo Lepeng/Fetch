@@ -344,7 +344,15 @@ class ParallelFileDownloaderImpl(private val initialDownload: Download,
         var downloadedBytesPerSecond = downloaded
         var reportingStartTime = System.nanoTime()
         var downloadSpeedStartTime = System.nanoTime()
+
+        val sleepInterval = Math.min(DEFAULT_DOWNLOAD_SPEED_REPORTING_INTERVAL_IN_MILLISECONDS, progressReportingIntervalMillis)
         while (actionsCounter != actionsTotal && !interrupted && !terminated) {
+            // sleep a while to avoid consuming CPU too much
+            try{
+                Thread.sleep(sleepInterval)
+            }catch(ee: Exception){
+            }
+
             downloadInfo.downloaded = downloaded
             downloadInfo.total = total
             downloadSpeedStopTime = System.nanoTime()
